@@ -2,8 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const exphbs = require('express-handlebars');
-
 const app = express();
+const { Storage } = require('@google-cloud/storage');
+
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -17,6 +18,9 @@ app.engine('.hbs', exphbs.create({
 }).engine);
 
 app.set('view engine', '.hbs');
+
+
+
 
 
 
