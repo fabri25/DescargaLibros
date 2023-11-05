@@ -14,15 +14,34 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // Asegúrate de que el nombre del campo en tu formulario sea 'email', no 'user'
+    
     try {
-        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-        // Usuario autenticado, puedes redirigir o manejar como prefieras
-        res.redirect('/home');
+        const usersRef = db.collection('users');
+        const snapshot = await usersRef.where('email', '==', email).get();
+        if (snapshot.empty) {
+            return res.status(401).send('No existe un usuario con ese correo electrónico.');
+        }
+        
+        let user;
+        snapshot.forEach(doc => {
+            user = doc.data();
+        });
+        
+        if (user.password === password) {
+            // Autenticación exitosa, redirigir al home
+            res.redirect('/home');
+        } else {
+            // Contraseña incorrecta
+            res.status(401).send('Contraseña incorrecta.');
+        }
     } catch (error) {
         res.status(500).send(error.message);
     }
 });
+
+
+
 
 router.get('/home', (req, res) => {
     res.render('home');

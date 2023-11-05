@@ -35,6 +35,36 @@
             opacity: 0.7; /* Opcional: para dar un efecto al pasar el mouse por encima */
         }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script>
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "tu-api-key",
+            authDomain: "tu-auth-domain",
+            // ... el resto de tu configuración
+        };
+
+        // Inicializa Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+
+        // Función para manejar el inicio de sesión
+        function login() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Usuario autenticado
+                    // Aquí puedes redirigir al usuario a otra página o hacer algo con la información del usuario
+                    window.location.href = '/home'; // Redirige al usuario a la página de inicio
+                })
+                .catch((error) => {
+                    console.error(error);
+                    // Aquí puedes mostrar un mensaje de error al usuario
+                });
+        }
+    </script>
 </head>
 <body class="full-cover-background" style="background-image:url(assets/img/font-login.jpg);">
     <div class="form-container">
@@ -44,10 +74,10 @@
        <h4 class="text-center all-tittles" style="margin-bottom: 30px;">inicia sesión con tu cuenta</h4>
        <form action="/" method="post">
             <div class="group-material-login">
-              <input type="text" name="user" class="material-login-control" required="" maxlength="70">
+              <input type="text" name="email" class="material-login-control" required="" maxlength="70">
               <span class="highlight-login"></span>
               <span class="bar-login"></span>
-              <label><i class="zmdi zmdi-account"></i> &nbsp; Usuario</label>
+              <label><i class="zmdi zmdi-account"></i> &nbsp; E-mail</label>
             </div>
             <div class="group-material-login">
               <input type="password" name="password" class="material-login-control" required="" maxlength="70">
