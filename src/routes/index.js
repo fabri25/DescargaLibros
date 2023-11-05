@@ -7,10 +7,21 @@ const { Storage } = require('@google-cloud/storage');
 const storage = new Storage();
 const bucketName = 'descargalibros1';
 const bucket = storage.bucket(bucketName);
-  
+const admin = require('firebase-admin');
 
 router.get('/', (req, res) => {
     res.render('index');
+});
+
+router.post('/', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        // Usuario autenticado, puedes redirigir o manejar como prefieras
+        res.redirect('/home');
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 router.get('/home', (req, res) => {
@@ -75,22 +86,33 @@ router.get('/deleteBook/:id', async (req,res) => {
 
    res.redirect('/catalog');
     
-})
+});
 
 
 
-router.get('/users', async (req,res) => {
-    const QuerySnapshot = await db.collection('users').get()
-
-    const users = QuerySnapshot.docs.map(doc =>({
-        id: doc.id,
-        ...doc.data()
-    }))
-    console.log(users);
-    //res.render('./views/index');
-    res.send('Hello');
-})
+router.get('/admin', async (req,res) => {
+    res.render('admin');
+});
 
 
+router.post('/admin', async (req, res) => {
+    const { nombres,apellidos,email, password } = req.body;
+    try {
+        const userRecord = await admin.auth().createUser({
+            email: email,
+            password: password,
+        });
+        db.collection('users').add({
+            nombres,
+            apellidos,
+            email,
+            password
+        })
+        // Usuario registrado, puedes redirigir o manejar como prefieras
+        res.redirect('/');
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 module.exports = router;
